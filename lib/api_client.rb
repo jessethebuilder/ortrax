@@ -2,9 +2,8 @@ require 'rest-client'
 require 'json'
 
 class ApiClient
-  URL_ROOT = 'http://v2.ortrax.com/dev'
-
-  def initialize(key, debug: true)
+  def initialize(key, debug: false)
+    @debug = debug
     @token = key
   end
 
@@ -12,18 +11,37 @@ class ApiClient
     get("case?caseId=#{id}")
   end
 
+  def verify_case(case_id, verified = true)
+    post("/message/verify", {
+        caseId: case_id,
+        verified: verified
+    })
+  end
+
   private
+
+  def post(path, payload)
+    res = RestClient.post(
+      "#{ENV.fetch('ORTRAX_API_URL')}/#{path}",
+      payload,
+      headers
+    )
+  end
 
   def get(path)
     res = RestClient.get(
-      "#{URL_ROOT}/#{path}",
-      {
-        accept: :json,
-        content_type: :json,
-        Authorization: "Token token=" + @token
-      }
+      "#{ENV.fetch('ORTRAX_API_URL')}/#{path}",
+      headers
     )
 
     JSON.parse(res.body)
+  end
+
+  def headers
+    {
+      accept: :json,
+      content_type: :json,
+      Authorization: "Token token=" + @token
+    }
   end
 end

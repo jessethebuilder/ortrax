@@ -3,8 +3,6 @@ require_relative 'scraper/get_cases'
 require 'capybara'
 
 class Scraper
-  URL_ROOT = 'https://app.ortrax.com'
-
   def initialize(username, password, debug: false)
     @username = username
     @password = password
@@ -33,7 +31,7 @@ class Scraper
   end
 
   def login_path
-    "#{URL_ROOT}/login"
+    "#{ENV.fetch('ORTRAX_WEB_URL')}/login"
   end
 
   def initialize_walker

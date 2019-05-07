@@ -23,7 +23,7 @@ class Scraper
   end
 
   def goto_all_cases
-    @walker.visit "#{URL_ROOT}/all-cases/0"
+    @walker.visit "#{ENV.fetch('ORTRAX_WEB_URL')}/all-cases/0"
     wait_until{ @walker.has_css?('.moreCases') }
   end
 

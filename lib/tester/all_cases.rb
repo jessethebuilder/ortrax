@@ -6,9 +6,7 @@ class Tester
   end
 
   def all_cases
-    cases = get_all_cases
-
-    cases.each do |kase|
+    get_all_cases.each do |kase|
       test_case!(kase)
       return if @debug # Only test 1 case.
     end
@@ -32,9 +30,15 @@ class Tester
                API Data Dump:\n#{api_data}"
     end
 
-    return true if issue.nil?
-
-    report_issue("Issue with Case #{case_id}", issue)
+    if issue.nil?
+      puts "case #{case_id} verified!"
+      api_client.verify_case(case_id, true)
+    else
+      # Failure
+      puts "case #{case_id} NOT verified!"
+      report_issue("Issue with Case #{case_id}", issue)
+      api_client.verify_case(case_id, false)
+    end
   end
 
   def cases_match_data?(web_data, api_data)
